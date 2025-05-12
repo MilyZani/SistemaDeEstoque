@@ -10,30 +10,75 @@ public class Tests
 {
     public static class Estoque
     {
-        public static void AdicionarCadastroTest()
+        public static void Start()
         {
-            var successString = "======================================\nPRODUTO CADASTRADO\n======================================";
-            
-            var originalConsoleIn = Console.In;
-            var bufferIn = new StringWriter();
-            var produto = "sapato\n12\n12";
-            Console.SetIn(new StringReader(produto));
-
-
-            var originalConsoleOut = Console.Out;
-            var bufferOut = new StringWriter();
-            Console.SetOut(bufferOut);
-            ProdutoFisico.AdicionarCadastro();
-            Console.SetIn(originalConsoleIn);
-            var outData = bufferOut.ToString();
-            Console.SetOut(originalConsoleOut);
-            if (outData.Split("\n").Any(i => i == "PRODUTO CADASTRADO"))
+            var resultList = new List<string>();
+            if (AdicionarCadastroTest_Erro())
             {
-                Console.WriteLine("TESTE_ADICIONAR - OK");
-                Console.ReadLine();
+                resultList.Add("TESTE_ADICIONAR_PRODUTO_ERRADO - OK");
             }
-            Console.WriteLine("TESTE_ADICIONAR - ERROR");
-            Console.ReadLine();
+            else
+            {
+                resultList.Add("TESTE_ADICIONAR_PRODUTO_ERRADO - ERRO");
+            }
+
+            if (AdicionarCadastroTest_Sucesso())
+            {
+                resultList.Add("TESTE_ADICIONAR_PRODUTO_CORRETO - OK");
+            }
+            else
+            {
+                resultList.Add("TESTE_ADICIONAR_PRODUTO_CORRETO - ERRO");
+            }
+            resultList.ForEach(x => Console.WriteLine(x));
         }
+        
+        private static bool AdicionarCadastroTest_Sucesso()
+        {
+            var originalInput = Console.In;
+            var originalOutput = Console.Out;
+            var bufferInput = new StringWriter();
+            var bufferOutput = new StringWriter();
+            
+            var produto = "sapato\n12\n12";
+
+            Console.SetIn(new StringReader(produto));
+            Console.SetOut(bufferOutput);
+
+            ProdutoFisico.AdicionarCadastro();
+            
+            var outData = bufferOutput.ToString().Split("\n");
+            Console.SetOut(originalOutput);
+            Console.SetIn(originalInput);
+            
+            if (outData.Any(i => i == "PRODUTO CADASTRADO"))
+                return true;
+            return false;
+        }
+        
+        private static bool AdicionarCadastroTest_Erro()
+        {
+            var originalInput = Console.In;
+            var originalOutput = Console.Out;
+            var bufferInput = new StringWriter();
+            var bufferOutput = new StringWriter();
+            
+            var produto = "sapato\n12\nf\nsapato\n2\n2";
+
+            Console.SetIn(new StringReader(produto));
+            Console.SetOut(bufferOutput);
+
+            ProdutoFisico.AdicionarCadastro();
+            
+            var outData = bufferOutput.ToString().Split("\n");
+            
+            Console.SetOut(originalOutput);
+            Console.SetIn(originalInput);
+
+            if (outData.Any(i => i == "ERRO NA OPCAO SELECIONADA"))
+                return true;
+            return false;
+        }
+    
     }
 }

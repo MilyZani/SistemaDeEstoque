@@ -33,7 +33,7 @@ public static class Ferramentas
     {
         if (float.TryParse(inputUsuario, out float input) is false)
         {
-            Say("DIGITE UM NÚMERO");
+            Say("ERRO NA OPCAO SELECIONADA");
             Thread.Sleep(2000);
             Console.Clear();
 

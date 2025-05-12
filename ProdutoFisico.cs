@@ -3,37 +3,54 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Projeto__Sistema_de_Estoque
 {
     internal class ProdutoFisico : Produto, IEstoque
     {
-        private static List<ProdutoFisico> newList = new();
-        private static List<ProdutoFisico> _listPF = new();
-        private float _frete;
-        private float _estoque;
-        public static string _caminho = "ESTOQUE1.txt";
+        public static List<ProdutoFisico> _listPF = new();
+        public float Frete { get; set; }
+        public float Estoque { get; set; }
+        private static string _caminho = "ESTOQUE1.json";
 
-        public ProdutoFisico(string nome, float preco, float frete)
+        private static void SalvarListaEmArquivo()
         {
-            Nome = nome;
-            Preco = preco;
-            _frete = frete;
+            var listJson = JsonSerializer.Serialize(_listPF);
+            File.Delete(_caminho);
+            File.AppendAllText(_caminho, listJson);
         }
 
         public static void Exibir()
         {
             Console.Clear();
+
+            var arquivoTexto = File.ReadAllText(_caminho);
+
+            var listaDeProdutos = JsonSerializer.Deserialize<List<ProdutoFisico>>(arquivoTexto);
+
+            if (listaDeProdutos.Any() is false)
+            {
+                Console.Clear();
+                Ferramentas.Say("LISTA VAZIA");
+                Thread.Sleep(2000);
+                Console.Clear();
+                return;
+            }
+
             Ferramentas.Say("LISTA DE PRODUTOS FISICOS:");
-            foreach (var i in _listPF)
+            
+            foreach (var i in listaDeProdutos)
             {
                 Console.WriteLine("Nome -> " + i.Nome);
                 Console.WriteLine("Preco -> " + i.Preco);
-                Console.WriteLine("Frete -> " + i._frete);
+                Console.WriteLine("Frete -> " + i.Frete);
                 Console.WriteLine(".......................");
             }
+
             Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
+
             Console.ReadLine();
             Console.Clear();
 
@@ -51,21 +68,24 @@ namespace Projeto__Sistema_de_Estoque
             Console.WriteLine("Digite o preço do produto:");
             var preco = Ferramentas.ConverteParaFloat(Console.ReadLine());
             if (preco == -1f)
-            {
-                AdicionarCadastro();
                 return;
-            }
 
             Console.WriteLine("Digite o frete do produto:");
             var frete = Ferramentas.ConverteParaFloat(Console.ReadLine());
             if (frete == -1f)
-            {
-                AdicionarCadastro();
                 return;
-            }
 
-            var objProdFisico = new ProdutoFisico(nome, preco, frete);
+            var objProdFisico = new ProdutoFisico()
+            {
+                Nome = nome,
+                Preco = preco,
+                Frete = frete
+            };
+
             _listPF.Add(objProdFisico);
+
+            SalvarListaEmArquivo();
+
             Console.Clear();
 
             Ferramentas.Say("PRODUTO CADASTRADO");
@@ -118,7 +138,7 @@ namespace Projeto__Sistema_de_Estoque
         public static void SaidaEstoque()
         {
             Console.Clear();
-            Ferramentas.Say("SAIDA DE PRODUTOS FISICOS- ESTOQUE");
+            Ferramentas.Say("SAIDA DE PRODUTOS FISICOS - ESTOQUE");
 
             Console.WriteLine("Digite o nome do produto que deseja " +
                 "dar saida:");
@@ -133,30 +153,5 @@ namespace Projeto__Sistema_de_Estoque
             Console.ReadLine();
             Console.Clear();
         }
-
-        //public static List<string> TransformaString(List<ProdutoFisico> list)
-        //{
-            
-        //    foreach (var item in list)
-        //    {
-        //        newList.Add(item.Nome.ToString());
-        //        newList.Add(item.Preco.ToString());
-        //        newList.Add(item._frete.ToString());
-        //        Console.WriteLine(item.Nome);
-               
-        //    }
-        //    return newList;
-        //}
-
-        public static void FileAppend(string _caminho, List<string> arquivo)
-        {
-            foreach (var item in arquivo)
-            {
-                
-            }
-            string stringArquivo = arquivo.ToString(); //transforma a lista em 1 string
-            File.AppendAllText(_caminho, stringArquivo);
-        }
-
     }
 }
