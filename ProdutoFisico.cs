@@ -12,32 +12,23 @@ namespace Projeto__Sistema_de_Estoque
     {
         public static List<ProdutoFisico> _listPF = new();
         public float Frete { get; set; }
-        public float Estoque { get; set; }
-        private static string _caminho = "ESTOQUE1.json";
-
-        private static void SalvarListaEmArquivo()
-        {
-            var listJson = JsonSerializer.Serialize(_listPF);
-            File.Delete(_caminho);
-            File.AppendAllText(_caminho, listJson);
-        }
+        private float Estoque { get; set; }
+        public static string caminho = "ESTOQUE1.json";
 
         public static void Exibir()
         {
             Console.Clear();
 
-            var arquivoTexto = File.ReadAllText(_caminho);
-
-            var listaDeProdutos = JsonSerializer.Deserialize<List<ProdutoFisico>>(arquivoTexto);
-
-            if (listaDeProdutos.Any() is false)
+            var listaDeProdutos = Ferramentas.LerJsonParaObj<ProdutoFisico>(caminho);
+            if (listaDeProdutos.Count == 0)
             {
+                Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
+                Console.ReadLine();
                 Console.Clear();
-                Ferramentas.Say("LISTA VAZIA");
-                Thread.Sleep(2000);
-                Console.Clear();
+                Menu.StartMenuOpcoes();
                 return;
             }
+            
 
             Ferramentas.Say("LISTA DE PRODUTOS FISICOS:");
             
@@ -54,7 +45,6 @@ namespace Projeto__Sistema_de_Estoque
             Console.ReadLine();
             Console.Clear();
 
-            // voltar daqui para o menu sem que caia no erro de chamada recursiva
         }
 
         public static void AdicionarCadastro()
@@ -84,7 +74,7 @@ namespace Projeto__Sistema_de_Estoque
 
             _listPF.Add(objProdFisico);
 
-            SalvarListaEmArquivo();
+            Ferramentas.SalvarListaEmArquivo(_listPF, caminho);
 
             Console.Clear();
 

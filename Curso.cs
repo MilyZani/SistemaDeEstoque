@@ -8,22 +8,28 @@ namespace Projeto__Sistema_de_Estoque
 {
     internal class Curso : Produto, IEstoque
     {
-        private static List<Curso> _listCurso = new();
+        public static List<Curso> _listCurso = new();
 
         public string Autor { get; set; }
         private int Vagas { get; set; }
+        public static string caminho = "VAGAS.json";
 
-        public Curso(string nome, float preco, string autor)
-        {
-            Nome = nome;
-            Preco = preco;
-            Autor = autor;
-        }
         public static void Exibir()
         {
             Console.Clear();
+
+            var listObj = Ferramentas.LerJsonParaObj<Curso>(caminho);
+            if (listObj.Count == 0)
+            {
+                Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
+                Console.ReadLine();
+                Console.Clear();
+                Menu.StartMenuOpcoes();
+                return;
+            }
+
             Ferramentas.Say("LISTA DE CURSOS:");
-            foreach (var i in _listCurso)
+            foreach (var i in listObj)
             {
                 Console.WriteLine("Nome -> " + i.Nome);
                 Console.WriteLine("Preco -> " + i.Preco);
@@ -40,7 +46,7 @@ namespace Projeto__Sistema_de_Estoque
         {
             Console.Clear();
             Ferramentas.Say("CADASTRO DE CURSOS");
-            
+
             Console.WriteLine("Digite o nome do curso");
             var nome = Console.ReadLine();
 
@@ -54,8 +60,20 @@ namespace Projeto__Sistema_de_Estoque
 
             Console.WriteLine("Digite o autor do curso");
             var autor = Console.ReadLine();
+            
 
-            _listCurso.Add(new Curso(nome, preco, autor));
+            Curso obj = new()
+            {
+                Nome = nome,
+                Preco = preco,
+                Autor = autor
+            };
+
+
+            _listCurso.Add(obj);
+
+            Ferramentas.SalvarListaEmArquivo(_listCurso, caminho);
+
 
             Ferramentas.Say("CURSO CADASTRADO");
 

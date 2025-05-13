@@ -4,29 +4,35 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Projeto__Sistema_de_Estoque
 {
     internal class Ebook : Produto, IEstoque
     {
-        private static List<Ebook> _listEbook = new();
+        public static List<Ebook> _listEbook = new();
 
         public string Autor { get; set; }
         private int _vendas;
+        public static string caminho = "VENDAS.json";
 
-        public Ebook(string nome, float preco, string autor)
-        {
-            Nome = nome;
-            Preco = preco;
-            Autor = autor;
-        }
-       
         public static void Exibir()
         {
             Console.Clear();
+
+            var listObj = Ferramentas.LerJsonParaObj<Ebook>(caminho);
+            if (listObj.Count == 0)
+            {
+                Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
+                Console.ReadLine();
+                Console.Clear();
+                Menu.StartMenuOpcoes();
+                return;
+            }
+            
             Ferramentas.Say("LISTA DE E-BOOK's:");
-            foreach (var book in _listEbook)
+            foreach (var book in listObj)
             {
                 Console.WriteLine("Nome -> " + book.Nome);
                 Console.WriteLine("Preco -> " + book.Preco);
@@ -58,9 +64,16 @@ namespace Projeto__Sistema_de_Estoque
             Console.WriteLine("Digite o Autor:");
             var autor = Console.ReadLine();
 
-            var obj = new Ebook(nome, preco, autor);
+            //var obj = new Ebook(nome, preco, autor);
+            Ebook objeto = new()
+            {
+                Nome = nome,
+                Preco = preco,
+                Autor = autor
+            };
 
-            _listEbook.Add(obj);
+            _listEbook.Add(objeto);
+            Ferramentas.SalvarListaEmArquivo(_listEbook, caminho);
 
             Ferramentas.Say("E-BOOK CADASTRADO");
             Thread.Sleep(2000);
