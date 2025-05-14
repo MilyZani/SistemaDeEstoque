@@ -21,6 +21,7 @@ namespace Projeto__Sistema_de_Estoque
             var listObj = Ferramentas.LerJsonParaObj<Curso>(caminho);
             if (listObj.Count == 0)
             {
+                Ferramentas.Say("LISTA VAZIA!");
                 Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
                 Console.ReadLine();
                 Console.Clear();
@@ -81,7 +82,7 @@ namespace Projeto__Sistema_de_Estoque
             Console.Clear();
         }
 
-        public static void AdicionarSaida()
+        public static void RemoverCadastro()
         {
             Console.Clear();
             Ferramentas.Say("VENDER CURSO");
@@ -89,11 +90,10 @@ namespace Projeto__Sistema_de_Estoque
             Console.WriteLine("Digite o nome do Curso vendido:");
             var input = Console.ReadLine();
 
-            List<Curso> novaLista = _listCurso
-                .Where(item => item.Nome != input)
-                .ToList();
 
-            _listCurso = novaLista;
+            var inputNome = _listCurso.FirstOrDefault(x => x.Nome == input);
+            _listCurso.Remove(inputNome);
+            Ferramentas.SalvarListaEmArquivo(_listCurso, caminho);
 
             Console.Clear();
 

@@ -24,6 +24,7 @@ namespace Projeto__Sistema_de_Estoque
             var listObj = Ferramentas.LerJsonParaObj<Ebook>(caminho);
             if (listObj.Count == 0)
             {
+                Ferramentas.Say("LISTA VAZIA!");
                 Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
                 Console.ReadLine();
                 Console.Clear();
@@ -81,7 +82,7 @@ namespace Projeto__Sistema_de_Estoque
             return;
         }
 
-        public static void AdicionarSaida()
+        public static void RemoverCadastro()
         {
             Console.Clear();
             Ferramentas.Say("VENDER E-BOOK");
@@ -89,11 +90,11 @@ namespace Projeto__Sistema_de_Estoque
             Console.WriteLine("Digite o nome do e-book vendido");
             var input = Console.ReadLine();
 
-            List<Ebook> novalista = _listEbook
-                .Where(item => item.Nome != input)
-                .ToList();
+           
 
-            _listEbook = novalista;
+            var inputNome = _listEbook.FirstOrDefault(x => x.Nome == input);
+            _listEbook.Remove(inputNome);
+            Ferramentas.SalvarListaEmArquivo(_listEbook, caminho);
 
             Console.Clear();
 

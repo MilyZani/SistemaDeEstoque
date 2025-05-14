@@ -216,13 +216,13 @@ public static class Menu
         switch (VerificaInputMenu)
         {
             case 1:
-                ProdutoFisico.AdicionarSaida();
+                ProdutoFisico.RemoverCadastro();
                 break;
             case 2:
-                Ebook.AdicionarSaida();
+                Ebook.RemoverCadastro();
                 break;
             case 3:
-                Curso.AdicionarSaida();
+                Curso.RemoverCadastro();
                 break;
         }
 

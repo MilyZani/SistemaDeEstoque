@@ -22,6 +22,7 @@ namespace Projeto__Sistema_de_Estoque
             var listaDeProdutos = Ferramentas.LerJsonParaObj<ProdutoFisico>(caminho);
             if (listaDeProdutos.Count == 0)
             {
+                Ferramentas.Say("LISTA VAZIA!");
                 Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
                 Console.ReadLine();
                 Console.Clear();
@@ -83,20 +84,21 @@ namespace Projeto__Sistema_de_Estoque
             Thread.Sleep(2000);
         }
 
-        public static void AdicionarSaida()
+        public static void RemoverCadastro()
         {
             Console.Clear();
+           
             Ferramentas.Say("VENDA DE PRODUTOS FISICOS");
 
             Console.WriteLine("Digite o nome do produto vendido:");
 
             var input = Console.ReadLine();
 
-            List<ProdutoFisico> newList = _listPF
-                .Where(item => item.Nome != input)
-                .ToList();
-
-            _listPF = newList;
+            var produto = _listPF.FirstOrDefault(t => t.Nome == input);
+            
+            _listPF.Remove(produto);
+            
+            Ferramentas.SalvarListaEmArquivo(_listPF, caminho);
 
             Console.Clear();
 

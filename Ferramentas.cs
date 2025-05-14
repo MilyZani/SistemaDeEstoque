@@ -10,7 +10,7 @@ namespace Projeto__Sistema_de_Estoque;
 
 public static class Ferramentas
 {
-
+  
     public static List<T> LerJsonParaObj<T>(string caminho)
     {
         try
