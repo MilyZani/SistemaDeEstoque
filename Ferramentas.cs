@@ -10,28 +10,22 @@ namespace Projeto__Sistema_de_Estoque;
 
 public static class Ferramentas
 {
-  
     public static List<T> LerJsonParaObj<T>(string caminho)
     {
         try
         {
-            var arquivoLido = File.ReadAllText(caminho);
-            if (new FileInfo(caminho).Length == 0)
-            {
-                Console.Clear();
-                Ferramentas.Say("LISTA VAZIA");
-                Thread.Sleep(2000);
-                Console.Clear();
-                return new List<T>();
-            }
-            List<T> listaObj = JsonSerializer.Deserialize<List<T>>(arquivoLido);
+            var arquivo = File.ReadAllText(caminho);
 
-            return listaObj;
+            if (new FileInfo(caminho).Length == 0)
+                return [];
+
+            var lista = JsonSerializer.Deserialize<List<T>>(arquivo);
+
+            return lista;
         }
         catch
         {
-            Console.Clear();
-            return new List<T>();
+            return [];
         }
     }
 
@@ -42,17 +36,17 @@ public static class Ferramentas
         File.AppendAllText(caminho, arquivoJson);
     }
 
-    public static void Say(string palavra)
-    {
-        Console.WriteLine("======================================");
-        Console.WriteLine(palavra);
-        Console.WriteLine("======================================");
-    }
+    public static void Say(string palavra) =>
+        Console.WriteLine(new string('=', palavra.Length) + "\n" + palavra + "\n" + new string('=', palavra.Length));
 
-    public static int ConverteParaInteiro(string inputUsuario)
+    public static int ConverteParaInteiro(string? inputUsuario)
     {
+        if (string.IsNullOrEmpty(inputUsuario) || string.IsNullOrEmpty(inputUsuario))
+            return -1;
+
         if (int.TryParse(inputUsuario, out int input) is false)
         {
+            Console.Clear();
             Say("DIGITE UM NÚMERO");
             Thread.Sleep(2000);
             Console.Clear();
@@ -62,8 +56,11 @@ public static class Ferramentas
         return input;
     }
 
-    public static float ConverteParaFloat(string inputUsuario)
+    public static float ConverteParaFloat(string? inputUsuario)
     {
+        if (string.IsNullOrEmpty(inputUsuario) || string.IsNullOrEmpty(inputUsuario))
+            return -1;
+            
         if (float.TryParse(inputUsuario, out float input) is false)
         {
             Say("ERRO NA OPCAO SELECIONADA");
@@ -79,11 +76,14 @@ public static class Ferramentas
     {
         if (input < 1 || input > quantidadeOpcoesMenu)
         {
-            Ferramentas.Say("DIGITE UM NÚMERO DISPONINEL NO MENU" +
+            Console.Clear();
+
+            Say("DIGITE UM NÚMERO DISPONINEL NO MENU" +
                 " DE OPÇÕES ");
 
             Thread.Sleep(2000);
             Console.Clear();
+
             return -1;
         }
         return input;
@@ -91,8 +91,10 @@ public static class Ferramentas
 
     public static void SayTiposProduto()
     {
-        Console.WriteLine("1- Produto Fisico\n" +
-                          "2- Ebook\n" +
-                          "3- Curso");
+        Console.WriteLine(
+            "1- Produto Fisico\n" +
+            "2- Ebook\n" +
+            "3- Curso"
+        );
     }
 }

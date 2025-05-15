@@ -10,32 +10,26 @@ public static class Menu
 {
     public static void StartMenuOpcoes()
     {
-        var loop = true;
-        while (loop)
+        while (true)
         {
             int quantidadeItemsMenu = 6;
 
             Ferramentas.Say("MENU DE OPÇÕES");
 
-            Console.WriteLine("1- Listar\n2- Adicionar\n3- Remover\n" +
-                "4- Entrada\n5- Saida\n6- Fechar Programa");
+            Console.WriteLine(
+                "1- Listar\n2- Adicionar\n3- Remover\n" +
+                "4- Entrada\n5- Saida\n6- Fechar Programa"
+            );
 
-            var inputDoUsuario = Console.ReadLine();
-            var inputInt = Ferramentas.ConverteParaInteiro(inputDoUsuario);
-            if (inputInt == -1)
-            {
-                StartMenuOpcoes();
-                return;
-            }
+            var input = Ferramentas.ConverteParaInteiro(Console.ReadLine());
+            if (input == -1)
+                continue;
 
-            var opcaoDoMenu = Ferramentas.VerificaOpcaoMenu(inputInt, quantidadeItemsMenu);
-            if (opcaoDoMenu == -1)
-            {
-                StartMenuOpcoes();
-                return;
-            }
+            var opcao = Ferramentas.VerificaOpcaoMenu(input, quantidadeItemsMenu);
+            if (opcao == -1)
+                continue;
 
-            switch (opcaoDoMenu)
+            switch (opcao)
             {
                 case 1:
                     ListarProdutos();
@@ -66,13 +60,9 @@ public static class Menu
                     Console.WriteLine("Saindo do programa em 1...");
                     Thread.Sleep(1000);
                     Console.Clear();
-                    loop = false;
-                    break;
+                    return;
             }
         }
-        
-        
-        Console.WriteLine("SAIU DO PROGRAMA");
     }
 
     public static void ListarProdutos()
@@ -84,15 +74,14 @@ public static class Menu
 
         Ferramentas.SayTiposProduto();
 
-        var inputUsuario = Console.ReadLine();
-        var inputUsuarioInteiro = Ferramentas.ConverteParaInteiro(inputUsuario);
-        if (inputUsuarioInteiro == -1)
+        var inputUsuario = Ferramentas.ConverteParaInteiro(Console.ReadLine());
+        if (inputUsuario == -1)
         {
             ListarProdutos();
             return;
         }
 
-        var opcaoMenu = Ferramentas.VerificaOpcaoMenu(inputUsuarioInteiro, quantidadeOpcoesMenu);
+        var opcaoMenu = Ferramentas.VerificaOpcaoMenu(inputUsuario, quantidadeOpcoesMenu);
         if (opcaoMenu == -1)
         {
             ListarProdutos();
@@ -143,7 +132,6 @@ public static class Menu
         {
             case 1:
                 ProdutoFisico.AdicionarCadastro();
-                Console.Clear();
                 break;
             case 2:
                 Ebook.AdicionarCadastro();
