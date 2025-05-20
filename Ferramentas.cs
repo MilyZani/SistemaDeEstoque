@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -10,25 +11,73 @@ namespace Projeto__Sistema_de_Estoque;
 
 public static class Ferramentas
 {
-    public static List<T> LerJsonParaObj<T>(string caminho)
+    private const string _url = "http://localhost:3000/api/v1/";
+    
+    public static List<T>? PegarLista<T>()
     {
         try
         {
-            var arquivo = File.ReadAllText(caminho);
+            var client = new HttpClient();
 
-            if (new FileInfo(caminho).Length == 0)
-                return [];
-
-            var lista = JsonSerializer.Deserialize<List<T>>(arquivo);
-
-            return lista;
+            var result = client.GetAsync(_url + typeof(T).Name.ToLower()).Result;
+            
+            if (result.IsSuccessStatusCode is false) return null;
+            
+            return JsonSerializer.Deserialize<List<T>>(result.Content.ReadAsStringAsync().Result);
         }
-        catch
+        catch (Exception e)
         {
-            return [];
+            Console.WriteLine(e);
+            throw;
         }
     }
+    public static bool AdicionarEntidade<T>(T entidade)
+    {
+        try
+        {
+            var client = new HttpClient();
+            var json = JsonSerializer.Serialize(entidade);
+            var content = new StringContent(
+                json, 
+                Encoding.UTF8, 
+                "application/json"
+            );
+            var result = client.PostAsync(
+                _url + typeof(T).Name.ToLower(), 
+                content
+            ).Result;
+            
+            if (result.IsSuccessStatusCode is false) return false;
 
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    public static bool RemoverEntidade<T>(string nome)
+    {
+        try
+        {
+            var client = new HttpClient();
+            
+            var result = client.DeleteAsync(
+                _url + typeof(T).Name.ToLower()  + "/" + nome
+            ).Result;
+            
+            if (result.IsSuccessStatusCode is false) return false;
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
     public static void SalvarListaEmArquivo<T>(List<T> list, string caminho)
     {
         var arquivoJson = JsonSerializer.Serialize(list);

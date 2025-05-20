@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Projeto__Sistema_de_Estoque;
@@ -11,11 +12,14 @@ namespace Projeto__Sistema_de_Estoque;
 internal class ProdutoFisico : Produto, IEstoque
 {
     private static List<ProdutoFisico> _items = [];
+    
+    [JsonPropertyName("frete")]
     public float Frete { get; set; }
     
+    [JsonPropertyName("estoque")]
     private float Estoque { get; set; }
 
-    private const string _caminho = "ESTOQUE.json";
+    private static string _caminho = "ESTOQUE.json";
 
     public static void Exibir()
     {
@@ -30,7 +34,6 @@ internal class ProdutoFisico : Produto, IEstoque
             Menu.StartMenuOpcoes();
             return;
         }
-        
 
         Ferramentas.Say("LISTA DE PRODUTOS FISICOS:");
         

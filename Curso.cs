@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Projeto__Sistema_de_Estoque;
+
+
 internal class Curso : Produto, IEstoque
 {
-    private static List<Curso> _items = [];
+    [JsonPropertyName("autor")]
     public string Autor { get; init; }
     
-    private const string _caminho = "VAGAS.json";
-
     public static void Exibir()
     {
+        var _list = Ferramentas.PegarLista<Curso>();
         Console.Clear();
-
-        if (_items.Count == 0)
+        
+        if (_list is null || _list.Count == 0)
         {
             Ferramentas.Say("LISTA VAZIA!");
             Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
@@ -29,7 +31,7 @@ internal class Curso : Produto, IEstoque
 
         Ferramentas.Say("LISTA DE CURSOS:");
         
-        foreach (var item in _items)
+        foreach (var item in _list)
         {
             Console.WriteLine("Nome -> " + item.Nome);
             Console.WriteLine("Preco -> " + item.Preco);
@@ -61,8 +63,8 @@ internal class Curso : Produto, IEstoque
         }
 
         Console.Write("Digite o autor do curso: ");
-        var autor = Console.ReadLine();
         
+        var autor = Console.ReadLine();
 
         Curso obj = new()
         {
@@ -71,10 +73,16 @@ internal class Curso : Produto, IEstoque
             Autor = autor
         };
 
-        _items.Add(obj);
-
-        Ferramentas.SalvarListaEmArquivo(_items, _caminho);
-
+        var resultado = Ferramentas.AdicionarEntidade(obj);
+        
+        if (resultado is false)
+        {
+            Console.Clear();
+            Ferramentas.Say("ERRO NO CADASTRO DO CURSO");
+            Console.ReadLine();
+            return;
+        }
+        
         Ferramentas.Say("CURSO CADASTRADO");
 
         Thread.Sleep(2000);
@@ -89,9 +97,9 @@ internal class Curso : Produto, IEstoque
         Console.WriteLine("Digite o nome do Curso vendido:");
         var input = Console.ReadLine();
 
-        var inputNome = _items.FirstOrDefault(x => input.Contains(x.Nome));
+        var inputNome = Ferramentas.RemoverEntidade<Curso>(input);
 
-        if (inputNome == null)
+        if (inputNome is false)
         {
             Console.Clear();
             Ferramentas.Say("PRODUTO NAO EXISTE");
@@ -100,10 +108,6 @@ internal class Curso : Produto, IEstoque
             return;
         }
         
-        _items.Remove(inputNome);
-        
-        Ferramentas.SalvarListaEmArquivo(_items, _caminho);
-
         Console.Clear();
 
         Ferramentas.Say("CURSO REMOVIDO DOS DISPINIVEIS:");
@@ -153,19 +157,5 @@ internal class Curso : Produto, IEstoque
         Ferramentas.Say("TECLE ENTER PARA VOLTAR AO MENU");
         Console.ReadLine();
         Console.Clear();
-    }
-    public static void ValidarLista()
-    {
-        try
-        {
-            if (new FileInfo(_caminho).Length == 0) return;
-
-            var list = JsonSerializer.Deserialize<List<Curso>>(File.ReadAllText(_caminho));
-
-            if (list is null) return;
-
-            _items = list;
-        }
-        catch { }
     }
 }
